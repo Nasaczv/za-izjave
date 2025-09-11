@@ -543,44 +543,47 @@ nemaGridaCheckbox.addEventListener('change', () => {
 });
 
 </script>
-  <script>
-  // Lista važećih šifara
-  var validPasswords = ["nasa1"];
+<script>
+  // Dozvoljene šifre
+  const validPasswords = ["nasa1", "nasa2", "nasa3"];
+  let enteredPassword = null;
+  let startTime = null;
 
-  // Prompt za unos
-  var password = prompt("Unesite šifru da biste pristupili stranici:");
+  // Prompt za šifru
+  enteredPassword = prompt("Unesite šifru da biste pristupili stranici:");
 
-  if (!validPasswords.includes(password)) {
+  if (!validPasswords.includes(enteredPassword)) {
     alert("Pogrešna šifra!");
     document.body.innerHTML = "<h2>Pristup odbijen</h2>";
     throw new Error("Stop execution");
-  } else {
-    // Ako je dobra šifra, zapamti vreme ulaska
-    window.sessionStorage.setItem("loginTime", Date.now());
-    window.sessionStorage.setItem("loginPassword", password);
   }
 
-  // Kada korisnik napusti stranicu, izračunaj koliko se zadržao
-  window.addEventListener("beforeunload", function () {
-    var loginTime = parseInt(sessionStorage.getItem("loginTime"), 10);
-    var passwordUsed = sessionStorage.getItem("loginPassword");
-    var duration = Math.round((Date.now() - loginTime) / 1000); // u sekundama
+  // Ako je šifra tačna, pamti vreme ulaska
+  startTime = Date.now();
 
-    var logEntry = {
-      password: passwordUsed,
+  // Funkcija za slanje podataka ka Google Apps Script-u
+  function sendLog(eventType, duration = null) {
+    const data = {
+      password: enteredPassword,
+      event: eventType, // "enter" ili "exit"
       stayed: duration,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toLocaleString("sr-RS"),
+      pageTitle: document.title,
+      pageUrl: window.location.href
     };
 
-    // 🚫 Na GitHub Pages ovo ne može da upiše u fajl!
-    // Umesto toga, pošalji na backend skript:
-    // fetch("https://tvoj-server.com/logger.php", {
-    //   method: "POST",
-    //   headers: { "Content-Type": "application/json" },
-    //   body: JSON.stringify(logEntry)
-    // });
-    
-    console.log("LOG:", logEntry); // samo za test
+    // koristi sendBeacon sa text/plain (najpouzdanije za GAS)
+    const blob = new Blob([JSON.stringify(data)], { type: "text/plain" });
+    navigator.sendBeacon("https://script.google.com/macros/s/AKfycbyASBGkToMFqbN2ZSwrTdbTAHWAFGsCPotNfNK_uJnYgK6szKw7C3AaAbbk6JLqntBZ/exec", blob);
+  }
+
+  // 1) Loguj odmah kada uđe
+  sendLog("enter");
+
+  // 2) Loguj kada izlazi
+  window.addEventListener("pagehide", function () {
+    const durationSec = Math.round((Date.now() - startTime) / 1000);
+    sendLog("exit", durationSec + "s");
   });
 </script>
 </body>
