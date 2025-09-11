@@ -543,5 +543,45 @@ nemaGridaCheckbox.addEventListener('change', () => {
 });
 
 </script>
+  <script>
+  // Lista važećih šifara
+  var validPasswords = ["nasa1"];
+
+  // Prompt za unos
+  var password = prompt("Unesite šifru da biste pristupili stranici:");
+
+  if (!validPasswords.includes(password)) {
+    alert("Pogrešna šifra!");
+    document.body.innerHTML = "<h2>Pristup odbijen</h2>";
+    throw new Error("Stop execution");
+  } else {
+    // Ako je dobra šifra, zapamti vreme ulaska
+    window.sessionStorage.setItem("loginTime", Date.now());
+    window.sessionStorage.setItem("loginPassword", password);
+  }
+
+  // Kada korisnik napusti stranicu, izračunaj koliko se zadržao
+  window.addEventListener("beforeunload", function () {
+    var loginTime = parseInt(sessionStorage.getItem("loginTime"), 10);
+    var passwordUsed = sessionStorage.getItem("loginPassword");
+    var duration = Math.round((Date.now() - loginTime) / 1000); // u sekundama
+
+    var logEntry = {
+      password: passwordUsed,
+      stayed: duration,
+      timestamp: new Date().toISOString()
+    };
+
+    // 🚫 Na GitHub Pages ovo ne može da upiše u fajl!
+    // Umesto toga, pošalji na backend skript:
+    // fetch("https://tvoj-server.com/logger.php", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify(logEntry)
+    // });
+    
+    console.log("LOG:", logEntry); // samo za test
+  });
+</script>
 </body>
 </html>
