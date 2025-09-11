@@ -1,2 +1,1 @@
-# za-izjave
-za izjave
+# izjave
