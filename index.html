@@ -162,6 +162,10 @@
     top: 0px;
     transform: translateX(-50%);
   }
+    .overlay-text {
+  transform-origin: center bottom;
+}
+
   </style>
 </head>
 <body>
@@ -238,6 +242,11 @@
         <input type="range" id="max-width-range" min="20" max="100" value="73">
         <input type="number" id="max-width-input" min="20" max="100" value="73">
       </div>
+      <div class="range-control">
+  <label>🔍 Text scale:</label>
+  <input type="range" id="text-scale-range" min="0.50" max="3.00" step="0.01" value="1.00">
+  <input type="number" id="text-scale-input" min="0.50" max="3.00" step="0.01" value="1.00">
+</div>
 
       <div class="range-control">
         <label>⬇️ Udaljenost od dna (px):</label>
@@ -376,6 +385,16 @@
       v => { const w = v + '%'; document.getElementById('preview-text').style.maxWidth = w; document.getElementById('export-text').style.maxWidth = w; });
     syncDualInputs(document.getElementById('bottom-range'), document.getElementById('bottom-input'),
       v => { document.getElementById('preview-text').style.bottom = v + 'px'; document.getElementById('export-text').style.bottom = v + 'px'; });
+    syncDualInputs(
+  document.getElementById('text-scale-range'),
+  document.getElementById('text-scale-input'),
+  v => {
+    const s = parseFloat(v) || 1;
+    document.getElementById('preview-text').style.transform = `scale(${s})`;
+    document.getElementById('export-text').style.transform  = `scale(${s})`;
+  }
+);
+
 
     document.getElementById('generate').addEventListener('click', function () {
       syncHTML();
