@@ -2,6 +2,7 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=720">
   <title>Export PNG 960x1200</title>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
   <style>
@@ -13,6 +14,8 @@
       font-family: 'MyriadProBoldCond';
       src: url('MyriadPro-BoldCond.otf') format('opentype');
     }
+
+    html, body { height: 100%; }
 
     body {
       font-family: 'MyriadProBoldCond', sans-serif;
@@ -40,7 +43,7 @@
       left: 0;
       transform-origin: top left;
       user-select: none;
-      touch-action: none;
+      touch-action: pan-x pan-y;
       pointer-events: none;
     }
 
@@ -58,6 +61,7 @@
       white-space: normal;
       overflow-wrap: break-word;
       z-index: 5555;
+      transform-origin: center bottom;
     }
 
     .overlay-text-2 {
@@ -95,7 +99,45 @@
       flex-wrap: wrap;
     }
 
-    .range-control input[type="range"] { flex: 1; }
+    .range-control input[type="range"] {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      background: #ddd;
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+    .range-control input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #a50000 !important;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.35);
+    }
+    .range-control input[type="range"]::-moz-range-thumb {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #a50000 !important;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 1px 4px rgba(0,0,0,.35);
+      -moz-appearance: none;
+    }
+    .range-control input[type="range"]::-ms-thumb {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: #a50000 !important;
+      cursor: pointer;
+      border: 2px solid #fff;
+    }
     .range-control input[type="number"] { width: 60px; }
 
     #html-input {
@@ -104,6 +146,15 @@
       border: 1px solid #ccc;
       padding: 8px;
       font-size: 16px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="file"],
+    select,
+    textarea,
+    [contenteditable] {
+      font-size: 16px !important;
     }
 
     button { font-size: 16px; }
@@ -116,7 +167,7 @@
       display: block;
       background-position: center;
       user-select: none;
-      touch-action: none;
+      touch-action: pan-x pan-y;
       pointer-events: none;
       z-index: 55;
       position: absolute;
@@ -126,7 +177,6 @@
     .giga-wrapper { display: flex; min-width: 700px; gap: 20px; }
     .mega-w label { display: block; }
 
-    /* Color dugmad (vizuelni prikaz boje) */
     .toolbar .color-btn{
       width: 34px;
       height: 28px;
@@ -148,25 +198,56 @@
       border: 1px solid rgba(0,0,0,.15);
     }
     .toolbar .color-btn:focus{ outline: 2px solid #666; outline-offset: 2px; }
-      /* Grid linija po difoltu uključena */
-  #preview-area.grid-enabled::before {
-    width: 1px;
-    position: absolute;
-    height: 100%;
-    display: block;
-    right: 0;
-    left: 50%;
-    content: '';
-    background: #000;
-    z-index: 45444;
-    top: 0px;
-    transform: translateX(-50%);
-  }
-    .overlay-text {
-  transform-origin: center bottom;
-}
 
+    #preview-area.grid-enabled::before {
+      width: 1px;
+      position: absolute;
+      height: 100%;
+      display: block;
+      right: 0;
+      left: 50%;
+      content: '';
+      background: #000;
+      z-index: 45444;
+      top: 0px;
+      transform: translateX(-50%);
+    }
   </style>
+  <script>
+    (function () {
+      var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+      var meta = document.querySelector('meta[name="viewport"]');
+      if (!meta) { meta = document.createElement('meta'); meta.name = 'viewport'; document.head.appendChild(meta); }
+
+      if (isIOS) {
+        document.documentElement.style.overflow = 'hidden';
+        document.documentElement.style.height = '100%';
+        document.body.style.overflow = 'hidden';
+        document.body.style.height = '100%';
+        meta.content = 'width=720, user-scalable=yes';
+        var timer = null;
+        function isInput(el) {
+          if (!el) return false;
+          var t = el.tagName ? el.tagName.toLowerCase() : '';
+          return t === 'input' || t === 'textarea' || t === 'select' || el.isContentEditable;
+        }
+        document.addEventListener('focusin', function (e) {
+          if (isInput(e.target)) {
+            if (timer) { clearTimeout(timer); timer = null; }
+            meta.content = 'width=720, user-scalable=no';
+          }
+        });
+        document.addEventListener('focusout', function () {
+          timer = setTimeout(function () {
+            if (!isInput(document.activeElement)) meta.content = 'width=720, user-scalable=yes';
+            timer = null;
+          }, 50);
+        });
+      } else {
+        meta.content = 'width=720, user-scalable=yes';
+      }
+    })();
+  </script>
 </head>
 <body>
   <div class="giga-wrapper">
@@ -197,6 +278,7 @@
     <div class="wrapper-1">
       <!-- TOOLBAR -->
       <div class="toolbar">
+        <button onclick="toggleUppercase()"><b>AA</b></button>
         <button onclick="execCmd('bold')"><b>Bold</b></button>
         <button onclick="execCmd('italic')"><i>Italic</i></button>
         <button onclick="execCmd('justifyLeft')">Levo</button>
@@ -207,14 +289,14 @@
 
       <!-- HTML TEXT INPUT -->
       <label>📝 Unesi HTML текст:</label><br>
-      <div id="html-input" contenteditable="true" data-placeholder="“Звезда од Барија није имала бољи тим!”"></div>
+      <div id="html-input" contenteditable="true" data-placeholder=""Звезда од Барија није имала бољи тим!""></div>
 
       <br>
 
       <label>✍️ Unesi текст за изјаву:</label><br>
       <input type="text" id="statement-input" placeholder="ИЗЈАВУ ДАЈЕ:" style="width: 100%; padding: 8px; font-size: 16px;">
       <br><br>
-          <div class="toolbar">
+      <div class="toolbar">
         <button type="button" class="apply-color color-btn" data-color="#333" style="color:#333" aria-label="Boja #333">
           <span class="color-dot" aria-hidden="true"></span>
         </button>
@@ -230,37 +312,30 @@
         <input type="range" id="font-size-range" min="10" max="200" value="77">
         <input type="number" id="font-size-input" min="10" max="200" value="77">
       </div>
-
       <div class="range-control">
         <label>📏 Line height:</label>
         <input type="range" id="line-height-range" min="0.50" max="1.50" step="0.01" value="1.00">
         <input type="number" id="line-height-input" min="0.50" max="1.50" step="0.01" value="1.00">
       </div>
-
       <div class="range-control">
         <label>📐 Maks širina (%):</label>
         <input type="range" id="max-width-range" min="20" max="100" value="73">
         <input type="number" id="max-width-input" min="20" max="100" value="73">
       </div>
-
       <div class="range-control">
         <label>⬇️ Udaljenost od dna (px):</label>
         <input type="range" id="bottom-range" min="0" max="400" value="108">
         <input type="number" id="bottom-input" min="0" max="400" value="108">
       </div>
-            <div class="range-control">
-  <label>🔍 Text scale:</label>
-  <input type="range" id="text-scale-range" min="0.50" max="3.00" step="0.01" value="1.00">
-  <input type="number" id="text-scale-input" min="0.50" max="3.00" step="0.01" value="1.00">
-</div>
-      <!-- CHECKBOX -->
-<div class="range-control">
-  <label>
-    <input type="checkbox" id="nema-grida">
-    ✅ Ima grida
-  </label>
-</div>
-      <!-- EXPORT -->
+      <div class="range-control">
+        <label>🔍 Text scale:</label>
+        <input type="range" id="text-scale-range" min="0.50" max="3.00" step="0.01" value="1.00">
+        <input type="number" id="text-scale-input" min="0.50" max="3.00" step="0.01" value="1.00">
+      </div>
+      <div class="range-control">
+        <label><input type="checkbox" id="nema-grida"> ✅ Ima grida</label>
+      </div>
+
       <br>
       <button id="generate">🎨 Generate PNG</button>
       <a id="download-link" style="display: none;" download="output.png">⬇️ Preuzmi sliku</a>
@@ -270,92 +345,75 @@
   <script>
     const previewBg = document.getElementById('preview-bg');
     const exportBg  = document.getElementById('export-bg');
-    let scale = 1;
-    let pos = { x: 0, y: 0 };
-    let isDragging = false;
-    let lastTouches = [];
-    let dragStart = { x: 0, y: 0 };
+    let scale = 1, pos = { x: 0, y: 0 }, isDragging = false, lastTouches = [], dragStart = { x: 0, y: 0 };
 
     function updateTransform() {
-      const transform = `translate(${pos.x}px, ${pos.y}px) scale(${scale})`;
-      previewBg.style.transform = transform;
-      exportBg.style.transform  = transform;
+      const t = `translate(${pos.x}px, ${pos.y}px) scale(${scale})`;
+      previewBg.style.transform = t;
+      exportBg.style.transform  = t;
     }
 
-    // Desktop drag
     document.getElementById('preview-area').addEventListener('mousedown', e => {
-      isDragging = true;
-      dragStart = { x: e.clientX - pos.x, y: e.clientY - pos.y };
+      isDragging = true; dragStart = { x: e.clientX - pos.x, y: e.clientY - pos.y };
     });
     window.addEventListener('mousemove', e => {
-      if (!isDragging) return;
-      pos.x = e.clientX - dragStart.x;
-      pos.y = e.clientY - dragStart.y;
-      updateTransform();
+      if (!isDragging) return; pos.x = e.clientX - dragStart.x; pos.y = e.clientY - dragStart.y; updateTransform();
     });
     window.addEventListener('mouseup', () => isDragging = false);
 
-    // Zoom (wheel)
     document.getElementById('preview-area').addEventListener('wheel', e => {
       e.preventDefault();
-      const delta = e.deltaY > 0 ? -0.05 : 0.05;
-      scale = Math.min(Math.max(0.2, scale + delta), 5);
+      scale = Math.min(Math.max(0.2, scale + (e.deltaY > 0 ? -0.05 : 0.05)), 5);
       updateTransform();
     });
 
-    // Touch drag + pinch zoom
     const area = document.getElementById('preview-area');
     area.addEventListener('touchstart', e => {
       lastTouches = [...e.touches];
-      if (e.touches.length === 1) {
-        isDragging = true;
-        dragStart = { x: e.touches[0].clientX - pos.x, y: e.touches[0].clientY - pos.y };
-      }
+      if (e.touches.length === 1) { isDragging = true; dragStart = { x: e.touches[0].clientX - pos.x, y: e.touches[0].clientY - pos.y }; }
     });
     area.addEventListener('touchmove', e => {
       e.preventDefault();
-      if (e.touches.length === 1 && isDragging) {
-        pos.x = e.touches[0].clientX - dragStart.x;
-        pos.y = e.touches[0].clientY - dragStart.y;
-      } else if (e.touches.length === 2) {
+      if (e.touches.length === 1 && isDragging) { pos.x = e.touches[0].clientX - dragStart.x; pos.y = e.touches[0].clientY - dragStart.y; }
+      else if (e.touches.length === 2) {
         const dist = t => Math.hypot(t[0].clientX - t[1].clientX, t[0].clientY - t[1].clientY);
-        const oldDist = dist(lastTouches);
-        const newDist = dist(e.touches);
-        if (oldDist > 0) {
-          scale *= newDist / oldDist;
-          scale = Math.min(Math.max(0.2, scale), 5);
-        }
+        const od = dist(lastTouches), nd = dist(e.touches);
+        if (od > 0) { scale *= nd / od; scale = Math.min(Math.max(0.2, scale), 5); }
         lastTouches = [...e.touches];
       }
       updateTransform();
     }, { passive: false });
-    area.addEventListener('touchend', () => {
-      isDragging = false;
-      lastTouches = [];
-    });
+    area.addEventListener('touchend', () => { isDragging = false; lastTouches = []; });
 
-    // Upload
     document.getElementById('bg-upload').addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
-      reader.onload = function (e) {
-        previewBg.src = e.target.result;
-        exportBg.src  = e.target.result;
-        scale = 1;
-        pos = { x: 0, y: 0 };
-        updateTransform();
-      };
+      reader.onload = function (e) { previewBg.src = e.target.result; exportBg.src = e.target.result; scale = 1; pos = { x: 0, y: 0 }; updateTransform(); };
       reader.readAsDataURL(file);
     });
 
-    // Editor komande
+    let isUppercase = true;
+    function toggleUppercase() {
+      isUppercase = !isUppercase;
+      const val = isUppercase ? 'uppercase' : '';
+      document.getElementById('html-input').style.textTransform = val;
+      document.getElementById('preview-text').style.textTransform = val;
+      document.getElementById('export-text').style.textTransform  = val;
+      const btn = document.querySelector('button[onclick="toggleUppercase()"]');
+      btn.style.background = isUppercase ? '#a50000' : ''; btn.style.color = isUppercase ? '#fff' : '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('html-input').style.textTransform = 'uppercase';
+      document.getElementById('preview-text').style.textTransform = 'uppercase';
+      document.getElementById('export-text').style.textTransform  = 'uppercase';
+      const btn = document.querySelector('button[onclick="toggleUppercase()"]');
+      if (btn) { btn.style.background = '#a50000'; btn.style.color = '#fff'; }
+    });
+
     function execCmd(command, value = null) {
-      if (command === 'insertLineBreak') {
-        document.execCommand('insertHTML', false, '<br>');
-      } else {
-        document.execCommand(command, false, value);
-      }
+      if (command === 'insertLineBreak') document.execCommand('insertHTML', false, '<br>');
+      else document.execCommand(command, false, value);
       syncHTML();
     }
 
@@ -366,16 +424,15 @@
     }
     document.getElementById('html-input').addEventListener('input', syncHTML);
 
-    // Izjava (drugi tekst)
     document.getElementById('statement-input').addEventListener('input', function () {
       const value = this.value || "ИЗЈАВУ ДАЈЕ:";
       document.getElementById('preview-text-2').innerText = value;
       document.getElementById('export-text-2').innerText  = value;
     });
 
-    function syncDualInputs(rangeEl, numberEl, callback) {
-      rangeEl.addEventListener('input', () => { numberEl.value = rangeEl.value; callback(rangeEl.value); });
-      numberEl.addEventListener('input', () => { rangeEl.value = numberEl.value; callback(numberEl.value); });
+    function syncDualInputs(r, n, cb) {
+      r.addEventListener('input', () => { n.value = r.value; cb(r.value); });
+      n.addEventListener('input', () => { r.value = n.value; cb(n.value); });
     }
     syncDualInputs(document.getElementById('font-size-range'), document.getElementById('font-size-input'),
       v => { document.getElementById('preview-text').style.fontSize = v + 'px'; document.getElementById('export-text').style.fontSize = v + 'px'; });
@@ -385,225 +442,110 @@
       v => { const w = v + '%'; document.getElementById('preview-text').style.maxWidth = w; document.getElementById('export-text').style.maxWidth = w; });
     syncDualInputs(document.getElementById('bottom-range'), document.getElementById('bottom-input'),
       v => { document.getElementById('preview-text').style.bottom = v + 'px'; document.getElementById('export-text').style.bottom = v + 'px'; });
-    syncDualInputs(
-  document.getElementById('text-scale-range'),
-  document.getElementById('text-scale-input'),
-  v => {
-    const s = parseFloat(v) || 1;
-    document.getElementById('preview-text').style.transform = `scale(${s})`;
-    document.getElementById('export-text').style.transform  = `scale(${s})`;
-  }
-);
-
+    syncDualInputs(document.getElementById('text-scale-range'), document.getElementById('text-scale-input'),
+      v => { const s = parseFloat(v)||1; document.getElementById('preview-text').style.transform = `scale(${s})`; document.getElementById('export-text').style.transform = `scale(${s})`; });
 
     document.getElementById('generate').addEventListener('click', function () {
       syncHTML();
       document.fonts.ready.then(() => {
-        html2canvas(document.getElementById('export-area'), {
-          scale: 1,
-          useCORS: true,
-          backgroundColor: null
-        }).then(canvas => {
-          const link = document.getElementById('download-link');
-          link.href = canvas.toDataURL('image/png');
-          link.style.display = 'inline';
-          link.click();
+        html2canvas(document.getElementById('export-area'), { scale: 1, useCORS: true, backgroundColor: null }).then(canvas => {
+          const dataUrl = canvas.toDataURL('image/png');
+          // 1. Odmah preuzmi
+          const link = document.createElement('a');
+          link.href = dataUrl; link.download = 'output.png';
+          document.body.appendChild(link); link.click(); document.body.removeChild(link);
+          // 2. Nakon 0.3s otvori u novom tabu
+          setTimeout(() => {
+            const newTab = window.open('', '_blank');
+            if (newTab) {
+              newTab.document.write(`<!DOCTYPE html><html><head><title>output.png</title><style>body{margin:0;background:#111;display:flex;justify-content:center;}img{max-width:100%;height:auto;display:block;}</style></head><body><img src="${dataUrl}"></body></html>`);
+              newTab.document.close();
+            }
+          }, 300);
         });
       });
     });
 
-    // ====== DOZVOLJENE BOJE (sa normalizacijom) ======
-    const ALLOWED_HEX = ['#333333', '#a50000']; // 6-cifreni hex
-    const DEFAULT_HEX = '#333333';
+    const ALLOWED_HEX = ['#333333', '#a50000'], DEFAULT_HEX = '#333333';
     const htmlInput = document.getElementById('html-input');
 
     function toHex6(color) {
       if (!color) return '';
       color = color.trim().toLowerCase();
-
-      if (color.startsWith('#')) {
-        if (color.length === 4) {
-          return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`;
-        }
-        if (color.length === 7) return color;
-      }
-
+      if (color.startsWith('#')) { if (color.length === 4) return `#${color[1]}${color[1]}${color[2]}${color[2]}${color[3]}${color[3]}`; if (color.length === 7) return color; }
       const m = color.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/);
-      if (m) {
-        const r = (+m[1]).toString(16).padStart(2, '0');
-        const g = (+m[2]).toString(16).padStart(2, '0');
-        const b = (+m[3]).toString(16).padStart(2, '0');
-        return `#${r}${g}${b}`;
-      }
-
-      // nazivi boja i ostalo → koristi computed style
-      const tmp = document.createElement('span');
-      tmp.style.color = color;
-      document.body.appendChild(tmp);
-      const cs = getComputedStyle(tmp).color; // rgb(a)
-      document.body.removeChild(tmp);
-      return toHex6(cs);
+      if (m) return `#${(+m[1]).toString(16).padStart(2,'0')}${(+m[2]).toString(16).padStart(2,'0')}${(+m[3]).toString(16).padStart(2,'0')}`;
+      const tmp = document.createElement('span'); tmp.style.color = color; document.body.appendChild(tmp);
+      const cs = getComputedStyle(tmp).color; document.body.removeChild(tmp); return toHex6(cs);
     }
 
     function applyColor(color) {
-      const wanted = toHex6(color);
-      if (!ALLOWED_HEX.includes(wanted)) return;
-
-      const sel = window.getSelection();
-      if (!sel || sel.rangeCount === 0) return;
-      const range = sel.getRangeAt(0);
-      if (range.collapsed) return;
-
-      try {
-        document.execCommand('styleWithCSS', false, true);
-        const ok = document.execCommand('foreColor', false, wanted);
-        if (ok) { syncHTML(); return; }
-      } catch (e) {}
-
-      // Fallback: Range API
-      const span = document.createElement('span');
-      span.style.color = wanted;
-      try {
-        const frag = range.extractContents();
-        span.appendChild(frag);
-        range.insertNode(span);
-
-        sel.removeAllRanges();
-        const newRange = document.createRange();
-        newRange.selectNodeContents(span);
-        sel.addRange(newRange);
-      } catch (e) {
-        document.execCommand('insertHTML', false,
-          `<span style="color:${wanted}">${sel.toString()}</span>`);
-      }
-
+      const wanted = toHex6(color); if (!ALLOWED_HEX.includes(wanted)) return;
+      const sel = window.getSelection(); if (!sel || sel.rangeCount === 0) return;
+      const range = sel.getRangeAt(0); if (range.collapsed) return;
+      try { document.execCommand('styleWithCSS', false, true); if (document.execCommand('foreColor', false, wanted)) { syncHTML(); return; } } catch(e) {}
+      const span = document.createElement('span'); span.style.color = wanted;
+      try { const frag = range.extractContents(); span.appendChild(frag); range.insertNode(span); sel.removeAllRanges(); const nr = document.createRange(); nr.selectNodeContents(span); sel.addRange(nr); }
+      catch(e) { document.execCommand('insertHTML', false, `<span style="color:${wanted}">${sel.toString()}</span>`); }
       syncHTML();
     }
 
-    // Klik na vizuelna dugmad
-    document.querySelectorAll('.apply-color').forEach(btn => {
-      btn.addEventListener('click', () => applyColor(btn.dataset.color));
-    });
+    document.querySelectorAll('.apply-color').forEach(btn => btn.addEventListener('click', () => applyColor(btn.dataset.color)));
 
     function sanitizeColors(root) {
-      // inline style color → normalizuj, dozvoli samo ALLOWED_HEX
       root.querySelectorAll('[style]').forEach(el => {
         const hex = toHex6(el.style.color || '');
-        if (hex) {
-          el.style.color = ALLOWED_HEX.includes(hex) ? hex : DEFAULT_HEX;
-        }
-        if (el.getAttribute('style') && el.getAttribute('style').trim() === '') {
-          el.removeAttribute('style');
-        }
+        if (hex) el.style.color = ALLOWED_HEX.includes(hex) ? hex : DEFAULT_HEX;
+        if (el.getAttribute('style') && el.getAttribute('style').trim() === '') el.removeAttribute('style');
       });
-
-      // <font color="..."> → span style sa normalizacijom
       root.querySelectorAll('font[color]').forEach(el => {
-        const hex = toHex6(el.getAttribute('color'));
-        const span = document.createElement('span');
-        span.style.color = ALLOWED_HEX.includes(hex) ? hex : DEFAULT_HEX;
-        span.innerHTML = el.innerHTML;
-        el.replaceWith(span);
+        const hex = toHex6(el.getAttribute('color')); const span = document.createElement('span');
+        span.style.color = ALLOWED_HEX.includes(hex) ? hex : DEFAULT_HEX; span.innerHTML = el.innerHTML; el.replaceWith(span);
       });
     }
 
-    // PASTE: pročisti
     htmlInput.addEventListener('paste', (e) => {
-      e.preventDefault();
-      const cd = e.clipboardData || window.clipboardData;
+      e.preventDefault(); const cd = e.clipboardData || window.clipboardData;
       const html = cd.getData('text/html') || cd.getData('text/plain');
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
-      sanitizeColors(temp);
-      document.execCommand('insertHTML', false, temp.innerHTML || cd.getData('text/plain'));
-      syncHTML();
+      const temp = document.createElement('div'); temp.innerHTML = html; sanitizeColors(temp);
+      document.execCommand('insertHTML', false, temp.innerHTML || cd.getData('text/plain')); syncHTML();
     });
+    htmlInput.addEventListener('input', () => { sanitizeColors(htmlInput); syncHTML(); });
 
-    // INPUT: dodatna sanitizacija
-    htmlInput.addEventListener('input', () => {
-      sanitizeColors(htmlInput);
-      syncHTML();
-    });
-
-    // Ukloni eventualne <input type="color"> ako ih ima (od starih verzija)
     document.querySelectorAll('input[type="color"]').forEach(el => el.remove());
 
-    // Init
     updateTransform();
   </script>
 
   <script>
-    // Viewport fix, kao i u prethodnom fajlu
-    document.addEventListener('DOMContentLoaded', function () {
-      let metaTag = document.querySelector('meta[name="viewport"]');
-      if (metaTag) {
-        metaTag.setAttribute('content', 'width=720');
-      } else {
-        metaTag = document.createElement('meta');
-        metaTag.name = "viewport";
-        metaTag.content = "width=720";
-        document.head.appendChild(metaTag);
-      }
+    const previewArea = document.getElementById('preview-area');
+    const nemaGridaCheckbox = document.getElementById('nema-grida');
+    nemaGridaCheckbox.addEventListener('change', () => {
+      if (nemaGridaCheckbox.checked) previewArea.classList.add('grid-enabled');
+      else previewArea.classList.remove('grid-enabled');
     });
   </script>
-  
-<script>
-const previewArea = document.getElementById('preview-area');
-const nemaGridaCheckbox = document.getElementById('nema-grida');
 
-// Po difoltu grid je isključen (checkbox nije čekiran, nema klase)
+  <script>
+    const validPasswords = ["nasa1", "nasa2", "nasa3"];
+    let enteredPassword = null, startTime = null;
+    enteredPassword = prompt("Unesite šifru da biste pristupili stranici:");
+    if (!validPasswords.includes(enteredPassword)) {
+      alert("Pogrešna šifra!");
+      document.body.innerHTML = "<h2>Pristup odbijen</h2>";
+      throw new Error("Stop execution");
+    }
+    startTime = Date.now();
+    function sendLog(eventType, duration = null) {
+      const data = { password: enteredPassword, event: eventType, stayed: duration, timestamp: new Date().toLocaleString("sr-RS"), pageTitle: document.title, pageUrl: window.location.href };
+      const blob = new Blob([JSON.stringify(data)], { type: "text/plain" });
+      navigator.sendBeacon("https://script.google.com/macros/s/AKfycbyASBGkToMFqbN2ZSwrTdbTAHWAFGsCPotNfNK_uJnYgK6szKw7C3AaAbbk6JLqntBZ/exec", blob);
+    }
+    sendLog("enter");
+    window.addEventListener("pagehide", function () {
+      sendLog("exit", Math.round((Date.now() - startTime) / 1000) + "s");
+    });
+  </script>
 
-nemaGridaCheckbox.addEventListener('change', () => {
-  if (nemaGridaCheckbox.checked) {
-    previewArea.classList.add('grid-enabled');   // uključi liniju
-  } else {
-    previewArea.classList.remove('grid-enabled'); // isključi liniju
-  }
-});
-
-</script>
-<script>
-  // Dozvoljene šifre
-  const validPasswords = ["nasa1", "nasa2", "nasa3"];
-  let enteredPassword = null;
-  let startTime = null;
-
-  // Prompt za šifru
-  enteredPassword = prompt("Unesite šifru da biste pristupili stranici:");
-
-  if (!validPasswords.includes(enteredPassword)) {
-    alert("Pogrešna šifra!");
-    document.body.innerHTML = "<h2>Pristup odbijen</h2>";
-    throw new Error("Stop execution");
-  }
-
-  // Ako je šifra tačna, pamti vreme ulaska
-  startTime = Date.now();
-
-  // Funkcija za slanje podataka ka Google Apps Script-u
-  function sendLog(eventType, duration = null) {
-    const data = {
-      password: enteredPassword,
-      event: eventType, // "enter" ili "exit"
-      stayed: duration,
-      timestamp: new Date().toLocaleString("sr-RS"),
-      pageTitle: document.title,
-      pageUrl: window.location.href
-    };
-
-    // koristi sendBeacon sa text/plain (najpouzdanije za GAS)
-    const blob = new Blob([JSON.stringify(data)], { type: "text/plain" });
-    navigator.sendBeacon("https://script.google.com/macros/s/AKfycbyASBGkToMFqbN2ZSwrTdbTAHWAFGsCPotNfNK_uJnYgK6szKw7C3AaAbbk6JLqntBZ/exec", blob);
-  }
-
-  // 1) Loguj odmah kada uđe
-  sendLog("enter");
-
-  // 2) Loguj kada izlazi
-  window.addEventListener("pagehide", function () {
-    const durationSec = Math.round((Date.now() - startTime) / 1000);
-    sendLog("exit", durationSec + "s");
-  });
-</script>
 </body>
 </html>
