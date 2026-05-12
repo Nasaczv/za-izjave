@@ -2,9 +2,9 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=720">
   <title>Export PNG 960x1200</title>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  <meta name="viewport" content="width=710">
   <style>
     label { margin-bottom: 0; }
     .capture-area img { width: 100%; }
@@ -17,7 +17,10 @@
 
     html, body { height: 100%; }
 
-    body { font-family: 'MyriadProBoldCond', sans-serif; padding: 10px; }
+    body {
+      font-family: 'MyriadProBoldCond', sans-serif;
+      padding: 10px;
+    }
 
     .preview-wrapper {
       zoom: 37%;
@@ -31,12 +34,13 @@
       width: 960px;
       height: 1200px;
       overflow: hidden;
-      background-color: rgb(201, 201, 201);
+      background-color: rgb(184, 184, 184);
     }
 
     .bg-img {
       position: absolute;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       transform-origin: top left;
       user-select: none;
       touch-action: pan-x pan-y;
@@ -44,38 +48,38 @@
     }
 
     .overlay-text {
-      transform-origin: center bottom;
       position: absolute;
-      bottom: 79px;
+      bottom: 108px;
       font-size: 77px;
       max-width: 73%;
-      left: 0; right: 0; margin: 0 auto;
+      left: 0;
+      right: 0;
+      margin: 0 auto;
       text-align: center;
       color: #a50000;
       line-height: 1;
       white-space: normal;
       overflow-wrap: break-word;
+      z-index: 5555;
+      transform-origin: center bottom;
+    }
+
+    .overlay-text-2 {
+      font-size: 33px;
+      letter-spacing: 0px;
+      line-height: 30px;
+      text-transform: uppercase;
+      color: #a50000;
+      text-align: center;
+      position: absolute;
+      bottom: 30px;
+      margin: 0 auto;
+      left: 0;
+      right: 0;
       z-index: 555;
     }
 
-    .toolbar .color-btn{
-      width: 34px; height: 28px;
-      border: 1px solid #ccc; border-radius: 6px;
-      display: inline-flex; align-items: center; justify-content: center;
-      padding: 0; margin-right: 8px; cursor: pointer; background: #fff;
-    }
-    .toolbar .color-dot{ width: 18px; height: 18px; border-radius: 50%; background: currentColor; border: 1px solid rgba(0,0,0,.15); }
-    .toolbar .color-btn:focus{ outline: 2px solid #666; outline-offset: 2px; }
-
     #export-area-wrapper { position: absolute; left: -9999px; top: -9999px; }
-
-    #html-input {
-      width: 100%;
-      min-height: 100px;
-      border: 1px solid #ccc;
-      padding: 8px;
-      font-size: 16px;
-    }
 
     [contenteditable][data-placeholder]:empty:before {
       content: attr(data-placeholder);
@@ -84,13 +88,17 @@
       display: block;
     }
 
-    .toolbar { margin-bottom: 10px; flex-wrap: wrap; display: flex; }
     .toolbar button { margin-right: 8px; font-size: 14px; padding: 4px 8px; cursor: pointer; }
+    .toolbar { margin-bottom: 10px; flex-wrap: wrap; display: flex; }
 
     .range-control {
-      display: flex; align-items: center; gap: 10px;
-      margin-bottom: 15px; flex-wrap: wrap;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+      flex-wrap: wrap;
     }
+
     .range-control input[type="range"] {
       flex: 1;
       -webkit-appearance: none;
@@ -132,6 +140,14 @@
     }
     .range-control input[type="number"] { width: 60px; }
 
+    #html-input {
+      width: 100%;
+      min-height: 100px;
+      border: 1px solid #ccc;
+      padding: 8px;
+      font-size: 16px;
+    }
+
     input[type="text"],
     input[type="number"],
     input[type="file"],
@@ -145,17 +161,43 @@
 
     .capture-area:after {
       content: '';
-      background-image: url(html-css-25.png);
-      width: 100%; height: 100%; display: block; background-position: center;
-      user-select: none; touch-action: pan-x pan-y; pointer-events: none;
-      z-index: 55; position: absolute; left: 0; top: 0;
+      background-image: url(html-css-26.png);
+      width: 100%;
+      height: 100%;
+      display: block;
+      background-position: center;
+      user-select: none;
+      touch-action: pan-x pan-y;
+      pointer-events: none;
+      z-index: 55;
+      position: absolute;
+      left: 0; top: 0;
     }
 
     .giga-wrapper { display: flex; min-width: 700px; gap: 20px; }
-    body > div > div:nth-child(1) > label { display: block; }
+    .mega-w label { display: block; }
 
-    #html-input [style*="font-size"] { font-size: inherit !important; }
-    #html-input [style*="line-height"] { line-height: inherit !important; }
+    .toolbar .color-btn{
+      width: 34px;
+      height: 28px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      margin-right: 8px;
+      cursor: pointer;
+      background: #fff;
+    }
+    .toolbar .color-dot{
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: currentColor;
+      border: 1px solid rgba(0,0,0,.15);
+    }
+    .toolbar .color-btn:focus{ outline: 2px solid #666; outline-offset: 2px; }
 
     #preview-area.grid-enabled::before {
       width: 1px;
@@ -182,7 +224,7 @@
         document.documentElement.style.height = '100%';
         document.body.style.overflow = 'hidden';
         document.body.style.height = '100%';
-        meta.content = 'width=710, user-scalable=yes';
+        meta.content = 'width=720, user-scalable=yes';
         var timer = null;
         function isInput(el) {
           if (!el) return false;
@@ -192,43 +234,49 @@
         document.addEventListener('focusin', function (e) {
           if (isInput(e.target)) {
             if (timer) { clearTimeout(timer); timer = null; }
-            meta.content = 'width=710, user-scalable=no';
+            meta.content = 'width=720, user-scalable=no';
           }
         });
         document.addEventListener('focusout', function () {
           timer = setTimeout(function () {
-            if (!isInput(document.activeElement)) meta.content = 'width=710, user-scalable=yes';
+            if (!isInput(document.activeElement)) meta.content = 'width=720, user-scalable=yes';
             timer = null;
           }, 50);
         });
       } else {
-        meta.content = 'width=710, user-scalable=yes';
+        meta.content = 'width=720, user-scalable=yes';
       }
     })();
   </script>
 </head>
 <body>
   <div class="giga-wrapper">
-    <div>
+    <div class="mega-w">
+      <!-- PREVIEW -->
       <div class="preview-wrapper">
         <div id="preview-area" class="capture-area">
-          <img id="preview-bg" class="bg-img" src="/uploads/2025/07/ТЕКСТ-4-5-1.png" alt="BG" draggable="false">
+          <img id="preview-bg" class="bg-img" src="html-css-26.png" alt="BG" draggable="false">
+          <div id="preview-text-2" class="overlay-text-2">ИЗЈАВУ ДАЈЕ:</div>
           <div id="preview-text" class="overlay-text"></div>
         </div>
       </div>
+
+      <!-- EXPORT -->
       <div id="export-area-wrapper">
         <div id="export-area" class="capture-area">
-          <img id="export-bg" class="bg-img" src="/uploads/2025/07/ТЕКСТ-4-5-1.png" alt="BG" draggable="false">
+          <img id="export-bg" class="bg-img" src="html-css-26.png" alt="BG" draggable="false">
+          <div id="export-text-2" class="overlay-text-2">ИЗЈАВУ ДАЈЕ:</div>
           <div id="export-text" class="overlay-text"></div>
         </div>
       </div>
+
       <label>📸 Odaberi pozadinsku sliku:
         <input type="file" id="bg-upload" accept="image/*">
       </label>
-      <br><br>
     </div>
 
-    <div>
+    <div class="wrapper-1">
+      <!-- TOOLBAR -->
       <div class="toolbar">
         <button onclick="toggleUppercase()"><b>AA</b></button>
         <button onclick="execCmd('bold')"><b>Bold</b></button>
@@ -238,14 +286,27 @@
         <button onclick="execCmd('justifyRight')">Desno</button>
         <button onclick="execCmd('insertLineBreak')">↩ Novi red</button>
       </div>
-      <label>📝 Unesi HTML tekst:</label><br>
-      <div id="html-input" contenteditable="true" data-placeholder="МАРКУС ВИЛИЈАМС ЈЕ<br>НОВО ПОЈАЧАЊЕ<br>ЗВЕЗДЕ!"></div>
+
+      <!-- HTML TEXT INPUT -->
+      <label>📝 Unesi HTML текст:</label><br>
+      <div id="html-input" contenteditable="true" data-placeholder=""Звезда од Барија није имала бољи тим!""></div>
+
       <br>
+
+      <label>✍️ Unesi текст за изјаву:</label><br>
+      <input type="text" id="statement-input" placeholder="ИЗЈАВУ ДАЈЕ:" style="width: 100%; padding: 8px; font-size: 16px;">
+      <br><br>
       <div class="toolbar">
-        <button type="button" class="apply-color color-btn" data-color="#333" style="color:#333" aria-label="Boja #333"><span class="color-dot" aria-hidden="true"></span></button>
-        <button type="button" class="apply-color color-btn" data-color="#a50000" style="color:#a50000" aria-label="Boja #a50000"><span class="color-dot" aria-hidden="true"></span></button>
+        <button type="button" class="apply-color color-btn" data-color="#333" style="color:#333" aria-label="Boja #333">
+          <span class="color-dot" aria-hidden="true"></span>
+        </button>
+        <button type="button" class="apply-color color-btn" data-color="#a50000" style="color:#a50000" aria-label="Boja #a50000">
+          <span class="color-dot" aria-hidden="true"></span>
+        </button>
       </div>
       <br>
+
+      <!-- KONTROLE -->
       <div class="range-control">
         <label>🔠 Font size:</label>
         <input type="range" id="font-size-range" min="10" max="200" value="77">
@@ -263,18 +324,8 @@
       </div>
       <div class="range-control">
         <label>⬇️ Udaljenost od dna (px):</label>
-        <input type="range" id="bottom-range" min="0" max="400" value="79">
-        <input type="number" id="bottom-input" min="0" max="400" value="79">
-      </div>
-      <div class="range-control">
-        <label>🔤 Selected font size (px):</label>
-        <input type="range" id="sel-font-size-range" min="10" max="200" value="77">
-        <input type="number" id="sel-font-size-input" min="10" max="200" value="77">
-      </div>
-      <div class="range-control">
-        <label>📐 Selected line height:</label>
-        <input type="range" id="sel-line-height-range" min="0.50" max="2.00" step="0.01" value="1.00">
-        <input type="number" id="sel-line-height-input" min="0.50" max="2.00" step="0.01" value="1.00">
+        <input type="range" id="bottom-range" min="0" max="400" value="108">
+        <input type="number" id="bottom-input" min="0" max="400" value="108">
       </div>
       <div class="range-control">
         <label>🔍 Text scale:</label>
@@ -284,9 +335,7 @@
       <div class="range-control">
         <label><input type="checkbox" id="nema-grida"> ✅ Ima grida</label>
       </div>
-      <div class="range-control">
-        <label><input type="checkbox" id="nagradna-igra"> 🎁 Dodaj "НАГРАДНА ИГРА" na vrh</label>
-      </div>
+
       <br>
       <button id="generate">🎨 Generate PNG</button>
       <a id="download-link" style="display: none;" download="output.png">⬇️ Preuzmi sliku</a>
@@ -304,11 +353,21 @@
       exportBg.style.transform  = t;
     }
 
-    const area = document.getElementById('preview-area');
-    area.addEventListener('mousedown', e => { isDragging = true; dragStart = { x: e.clientX - pos.x, y: e.clientY - pos.y }; });
-    window.addEventListener('mousemove', e => { if (!isDragging) return; pos.x = e.clientX - dragStart.x; pos.y = e.clientY - dragStart.y; updateTransform(); });
+    document.getElementById('preview-area').addEventListener('mousedown', e => {
+      isDragging = true; dragStart = { x: e.clientX - pos.x, y: e.clientY - pos.y };
+    });
+    window.addEventListener('mousemove', e => {
+      if (!isDragging) return; pos.x = e.clientX - dragStart.x; pos.y = e.clientY - dragStart.y; updateTransform();
+    });
     window.addEventListener('mouseup', () => isDragging = false);
-    area.addEventListener('wheel', e => { e.preventDefault(); scale += e.deltaY > 0 ? -0.05 : 0.05; scale = Math.min(Math.max(0.2, scale), 5); updateTransform(); });
+
+    document.getElementById('preview-area').addEventListener('wheel', e => {
+      e.preventDefault();
+      scale = Math.min(Math.max(0.2, scale + (e.deltaY > 0 ? -0.05 : 0.05)), 5);
+      updateTransform();
+    });
+
+    const area = document.getElementById('preview-area');
     area.addEventListener('touchstart', e => {
       lastTouches = [...e.touches];
       if (e.touches.length === 1) { isDragging = true; dragStart = { x: e.touches[0].clientX - pos.x, y: e.touches[0].clientY - pos.y }; }
@@ -327,11 +386,29 @@
     area.addEventListener('touchend', () => { isDragging = false; lastTouches = []; });
 
     document.getElementById('bg-upload').addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) return;
+      const file = event.target.files[0]; if (!file) return;
       const reader = new FileReader();
       reader.onload = function (e) { previewBg.src = e.target.result; exportBg.src = e.target.result; scale = 1; pos = { x: 0, y: 0 }; updateTransform(); };
       reader.readAsDataURL(file);
+    });
+
+    let isUppercase = true;
+    function toggleUppercase() {
+      isUppercase = !isUppercase;
+      const val = isUppercase ? 'uppercase' : '';
+      document.getElementById('html-input').style.textTransform = val;
+      document.getElementById('preview-text').style.textTransform = val;
+      document.getElementById('export-text').style.textTransform  = val;
+      const btn = document.querySelector('button[onclick="toggleUppercase()"]');
+      btn.style.background = isUppercase ? '#a50000' : ''; btn.style.color = isUppercase ? '#fff' : '';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('html-input').style.textTransform = 'uppercase';
+      document.getElementById('preview-text').style.textTransform = 'uppercase';
+      document.getElementById('export-text').style.textTransform  = 'uppercase';
+      const btn = document.querySelector('button[onclick="toggleUppercase()"]');
+      if (btn) { btn.style.background = '#a50000'; btn.style.color = '#fff'; }
     });
 
     function execCmd(command, value = null) {
@@ -345,22 +422,28 @@
       document.getElementById('preview-text').innerHTML = html;
       document.getElementById('export-text').innerHTML  = html;
     }
+    document.getElementById('html-input').addEventListener('input', syncHTML);
+
+    document.getElementById('statement-input').addEventListener('input', function () {
+      const value = this.value || "ИЗЈАВУ ДАЈЕ:";
+      document.getElementById('preview-text-2').innerText = value;
+      document.getElementById('export-text-2').innerText  = value;
+    });
 
     function syncDualInputs(r, n, cb) {
       r.addEventListener('input', () => { n.value = r.value; cb(r.value); });
       n.addEventListener('input', () => { r.value = n.value; cb(n.value); });
     }
-
     syncDualInputs(document.getElementById('font-size-range'), document.getElementById('font-size-input'),
       v => { document.getElementById('preview-text').style.fontSize = v + 'px'; document.getElementById('export-text').style.fontSize = v + 'px'; });
-    syncDualInputs(document.getElementById('text-scale-range'), document.getElementById('text-scale-input'),
-      v => { const s = parseFloat(v)||1; document.getElementById('preview-text').style.transform = `scale(${s})`; document.getElementById('export-text').style.transform = `scale(${s})`; });
     syncDualInputs(document.getElementById('line-height-range'), document.getElementById('line-height-input'),
       v => { document.getElementById('preview-text').style.lineHeight = v; document.getElementById('export-text').style.lineHeight = v; });
     syncDualInputs(document.getElementById('max-width-range'), document.getElementById('max-width-input'),
-      v => { document.getElementById('preview-text').style.maxWidth = v + '%'; document.getElementById('export-text').style.maxWidth = v + '%'; });
+      v => { const w = v + '%'; document.getElementById('preview-text').style.maxWidth = w; document.getElementById('export-text').style.maxWidth = w; });
     syncDualInputs(document.getElementById('bottom-range'), document.getElementById('bottom-input'),
       v => { document.getElementById('preview-text').style.bottom = v + 'px'; document.getElementById('export-text').style.bottom = v + 'px'; });
+    syncDualInputs(document.getElementById('text-scale-range'), document.getElementById('text-scale-input'),
+      v => { const s = parseFloat(v)||1; document.getElementById('preview-text').style.transform = `scale(${s})`; document.getElementById('export-text').style.transform = `scale(${s})`; });
 
     document.getElementById('generate').addEventListener('click', function () {
       syncHTML();
@@ -429,80 +512,9 @@
     });
     htmlInput.addEventListener('input', () => { sanitizeColors(htmlInput); syncHTML(); });
 
-    let activeSelSpan = null;
-    function isInsideEditor(node) { return document.getElementById('html-input').contains(node); }
-    function getClosestActiveSpan(node) {
-      while (node && node !== document) { if (node.nodeType === 1 && node.hasAttribute && node.hasAttribute('data-sel-id')) return node; node = node.parentNode; } return null;
-    }
-    function wrapCurrentSelectionIfNeeded() {
-      const sel = window.getSelection(); if (!sel || sel.rangeCount === 0) return null;
-      const range = sel.getRangeAt(0); if (!isInsideEditor(range.commonAncestorContainer) || range.collapsed) return null;
-      const existing = getClosestActiveSpan(range.commonAncestorContainer); if (existing) { activeSelSpan = existing; return activeSelSpan; }
-      const span = document.createElement('span'); span.setAttribute('data-sel-id', String(Date.now()) + Math.random().toString(16).slice(2));
-      try { range.surroundContents(span); } catch(e) { const frag = range.extractContents(); span.appendChild(frag); range.insertNode(span); }
-      sel.removeAllRanges(); const nr = document.createRange(); nr.selectNodeContents(span); sel.addRange(nr);
-      activeSelSpan = span; syncHTML(); return activeSelSpan;
-    }
-    function ensureActiveSpan() {
-      const sel = window.getSelection();
-      if (sel && sel.rangeCount) { const c = getClosestActiveSpan(sel.getRangeAt(0).commonAncestorContainer); if (c) activeSelSpan = c; }
-      if (activeSelSpan && !document.getElementById('html-input').contains(activeSelSpan)) activeSelSpan = null;
-      return activeSelSpan;
-    }
-    htmlInput.addEventListener('mouseup', () => ensureActiveSpan());
-    htmlInput.addEventListener('keyup',   () => ensureActiveSpan());
-    htmlInput.addEventListener('click',   () => ensureActiveSpan());
-
-    (function(){
-      const r = document.getElementById('sel-font-size-range'), n = document.getElementById('sel-font-size-input');
-      function apply(v) { const span = wrapCurrentSelectionIfNeeded() || ensureActiveSpan(); if (!span) return; span.style.fontSize = `${parseFloat(v)}px`; syncHTML(); }
-      r.addEventListener('input', () => { n.value = r.value; apply(r.value); });
-      n.addEventListener('input', () => { r.value = n.value; apply(n.value); });
-    })();
-    (function(){
-      const r = document.getElementById('sel-line-height-range'), n = document.getElementById('sel-line-height-input');
-      function apply(v) { const span = wrapCurrentSelectionIfNeeded() || ensureActiveSpan(); if (!span) return; span.style.lineHeight = `${parseFloat(v)}`; syncHTML(); }
-      r.addEventListener('input', () => { n.value = r.value; apply(r.value); });
-      n.addEventListener('input', () => { r.value = n.value; apply(n.value); });
-    })();
+    document.querySelectorAll('input[type="color"]').forEach(el => el.remove());
 
     updateTransform();
-  </script>
-
-  <script>
-    let isUppercase = true;
-    function toggleUppercase() {
-      isUppercase = !isUppercase;
-      const val = isUppercase ? 'uppercase' : '';
-      document.getElementById('html-input').style.textTransform = val;
-      document.getElementById('preview-text').style.textTransform = val;
-      document.getElementById('export-text').style.textTransform  = val;
-      const btn = document.querySelector('button[onclick="toggleUppercase()"]');
-      btn.style.background = isUppercase ? '#a50000' : ''; btn.style.color = isUppercase ? '#fff' : '';
-    }
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('html-input').style.textTransform = 'uppercase';
-      document.getElementById('preview-text').style.textTransform = 'uppercase';
-      document.getElementById('export-text').style.textTransform  = 'uppercase';
-      const btn = document.querySelector('button[onclick="toggleUppercase()"]');
-      if (btn) { btn.style.background = '#a50000'; btn.style.color = '#fff'; }
-    });
-  </script>
-
-  <script>
-    const nagradaCheckbox = document.getElementById('nagradna-igra');
-    const editor = document.getElementById('html-input');
-    nagradaCheckbox.addEventListener('change', () => {
-      if (nagradaCheckbox.checked) {
-        if (!editor.querySelector('[data-nagrada]')) {
-          const span = document.createElement('span'); span.setAttribute('data-nagrada', 'true'); span.style.fontSize = '105px'; span.textContent = '- НАГРАДНА ИГРА -';
-          editor.insertBefore(span, editor.firstChild); editor.insertBefore(document.createElement('br'), span.nextSibling); syncHTML();
-        }
-      } else {
-        const span = editor.querySelector('[data-nagrada]');
-        if (span) { if (span.nextSibling && span.nextSibling.tagName === 'BR') span.nextSibling.remove(); span.remove(); syncHTML(); }
-      }
-    });
   </script>
 
   <script>
@@ -531,8 +543,7 @@
     }
     sendLog("enter");
     window.addEventListener("pagehide", function () {
-      const durationSec = Math.round((Date.now() - startTime) / 1000);
-      sendLog("exit", durationSec + "s");
+      sendLog("exit", Math.round((Date.now() - startTime) / 1000) + "s");
     });
   </script>
 
